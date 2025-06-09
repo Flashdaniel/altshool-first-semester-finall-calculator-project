@@ -11,11 +11,21 @@ class Calculator {
   }
 
   delete() {
-    console.log("delete");
+    const value = this.input.value;
+
+    if (!value) {
+      return;
+    }
+
+    this.input.value = value.slice(0, value.length - 1);
   }
 
   clear() {
-    console.log("clear");
+    if (this.input.value) {
+      this.input.value = "";
+    }
+
+    return;
   }
 
   showHistory() {
