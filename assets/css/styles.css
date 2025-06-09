@@ -141,8 +141,8 @@ button:active {
   --size: clamp(2.5rem, 2rem + 2vw, 3.2rem);
 }
 
-.calculator_operators > button:nth-of-type(5),
-.calculator_operators > button:nth-of-type(6) {
+.calculator_operators > button:nth-of-type(6),
+.calculator_operators > button:nth-of-type(7) {
   padding: 0.7rem;
 }
 
@@ -150,8 +150,6 @@ button:active {
   --size: clamp(2rem, 1.3rem + 2vw, 2.8rem);
   --bg: #b2b2b2;
   --color: #000;
-
-  grid-column: 1/-1;
   padding-block: 0.5rem;
 }
 
