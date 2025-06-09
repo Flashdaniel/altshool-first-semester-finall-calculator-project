@@ -11,6 +11,12 @@ class Calculator {
   }
 
   delete() {
+    const history = document.querySelector(".current_equal-history");
+
+    if (history) {
+      history.remove();
+    }
+
     const value = this.input.value;
 
     if (!value) {
@@ -23,6 +29,8 @@ class Calculator {
   clear() {
     if (this.input.value) {
       this.input.value = "";
+      const history = document.querySelector(".current_equal-history");
+      history.remove();
     }
 
     return;
@@ -32,13 +40,48 @@ class Calculator {
     console.log("showHistory");
   }
 
+  calculate() {
+    const value = this.input.value;
+
+    this.input.value = "";
+  }
+
   displayOnScreen(newValue) {
+    const signs = ["+", "-", "×", "%", "^", "÷", "."];
+
+    const prepareForCalculations = () => {
+      const value = this.input.value;
+      const lastInput = value[value.length - 1];
+
+      if (lastInput == ".") {
+        this.input.value = value + 0;
+      } else if (signs.slice(0, signs.length - 1).includes(lastInput)) {
+        this.input.value = value.slice(0, value.length - 1);
+      }
+
+      const history = `<span class='current_equal-history'>${this.input.value}</span>`;
+      const screen = document.querySelector(".calculator_header");
+
+      screen.insertAdjacentHTML("beforeend", history);
+
+      this.calculate(this.input.value);
+    };
+
+    // don't move further if the it's = and the screen is empty
+    // or if it's = and the input on the screen starts with = (shows the total result)
+    // if not the above, then prepareForCalculations.
+    if (newValue == "=" && this.input.value == "") {
+      return;
+    } else if (newValue == "=" && /^=/.test(this.input.value)) {
+      return;
+    } else if (newValue == "=") {
+      prepareForCalculations();
+    }
+
     // stop the improper adding of  Dot sign (eg. 12.3.5);
     if (newValue == "." && /\d+[.]\d+$/.test(this.input.value)) {
       return;
     }
-
-    const signs = ["+", "-", "×", "%", "^", "÷", "."];
 
     //   two signs can not be displayed together, replace old with the new sign.
     const replaceOldSignWithNewSign = () => {
