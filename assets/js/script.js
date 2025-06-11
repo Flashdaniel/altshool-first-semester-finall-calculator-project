@@ -4,10 +4,20 @@ class Calculator {
     this.buttonParent = buttonParent;
 
     this.onClickBound = this.onClick.bind(this);
+    this.inputBound = this.onInput.bind(this);
+  }
+
+  getPercentage(value) {
+    const number = Number(value.slice(0, value.length - 1));
+
+    if (typeof number != "number") return;
+
+    return (number * 1) / 100;
   }
 
   run() {
     this.buttonParent.addEventListener("click", this.onClickBound);
+    this.input.addEventListener("input", this.inputBound);
   }
 
   delete() {
@@ -40,10 +50,20 @@ class Calculator {
     console.log("showHistory");
   }
 
-  calculate() {
-    const value = this.input.value;
+  calculate(input) {
+    const value = input;
 
-    this.input.value = "";
+    // const solve = (value) => {
+    //   let percent = value.match(/\d+%|\d+[.]\d+%/);
+
+    //   if (percent) {
+    //     percent = this.getPercentage(percent[0]);
+    //     value = value.replace(/\d+%|\d+[.]\d+%/, `${percent}`);
+    //     solve(value);
+    //   }
+
+    //   return value;
+    // } ;
   }
 
   displayOnScreen(newValue) {
@@ -102,6 +122,23 @@ class Calculator {
     }
 
     this.input.value = this.input.value + newValue;
+
+    // calling onInput method to check if there is a percent value
+    // so that is can get the result.
+    this.onInput();
+  }
+
+  onInput() {
+    const value = this.input.value;
+    let percent = value.match(/\d+%|\d+[.]\d+%/);
+
+    if (percent) {
+      percent = this.getPercentage(percent[0]);
+      this.input.value = this.input.value.replace(
+        /\d+%|\d+[.]\d+%/,
+        `${percent}`
+      );
+    }
   }
 
   onClick(event) {
