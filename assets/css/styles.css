@@ -55,12 +55,13 @@ main {
 .current_equal-history {
   position: absolute;
   top: 0.7rem;
-  left: 1rem;
+  right: 1rem;
   color: hsl(0, 0%, 100%);
 }
 
 .input {
   display: block;
+  text-align: right;
   width: 100%;
   padding: 1.6rem 0.8rem;
   border-radius: 20px;
