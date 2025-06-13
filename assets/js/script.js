@@ -7,12 +7,57 @@ class Calculator {
     this.inputBound = this.onInput.bind(this);
   }
 
+  add(val1, val2) {
+    return val1 + val2;
+  }
+
+  subtrate(val1, val2) {
+    return val1 - val2;
+  }
+
+  divide(val1, val2) {
+    return val1 / val2;
+  }
+
+  multiple(val1, val2) {
+    return val1 * val2;
+  }
+
+  power(base, exp) {
+    return Math.pow(base, exp);
+  }
+
+  getSubtration(value) {
+    value = value.match(/\d+\.\d+|\d+/g);
+    return this.subtrate(Number(value[0]), Number(value[1]));
+  }
+
+  getDivision(value) {
+    value = value.match(/\d+\.\d+|\d+/g);
+    return this.divide(Number(value[0]), Number(value[1]));
+  }
+
+  getMultiplication(value) {
+    value = value.match(/\d+\.\d+|\d+/g);
+    return this.multiple(Number(value[0]), Number(value[1]));
+  }
+
+  getAdditionRegEx(value) {
+    value = value.match(/\d+\.\d+|\d+/g);
+    return this.add(Number(value[0]), Number(value[1]));
+  }
+
   getPercentage(value) {
     const number = Number(value.slice(0, value.length - 1));
 
     if (typeof number != "number") return;
 
     return (number * 1) / 100;
+  }
+
+  getRaiseToPower(value) {
+    value = value.match(/\d+\.\d+|\d+/g);
+    return this.power(Number(value[0]), Number(value[1]));
   }
 
   run() {
@@ -51,19 +96,44 @@ class Calculator {
   }
 
   calculate(input) {
-    const value = input;
+    let value = input;
 
-    // const solve = (value) => {
-    //   let percent = value.match(/\d+%|\d+[.]\d+%/);
+    const solve = () => {
+      const mathsWork = (mathsRegEx, mathsFunction) => {
+        const solution = this[mathsFunction](value.match(mathsRegEx)[0]);
+        value = value.replace(mathsRegEx, `${solution}`);
+        solve();
+      };
 
-    //   if (percent) {
-    //     percent = this.getPercentage(percent[0]);
-    //     value = value.replace(/\d+%|\d+[.]\d+%/, `${percent}`);
-    //     solve(value);
-    //   }
+      const raiseToPowerRegEx =
+        /\d+\.\d+\^\d+\.\d+|\d+\.\d+\^\d+|\d+\^\d+\.\d+|\d+\^\d+/;
+      const divisionRegEx =
+        /\d+\.\d+÷\d+\.\d+|\d+\.\d+÷\d+|\d+÷\d+\.\d+|\d+÷\d+/;
+      const multiplicationRegEx =
+        /\d+\.\d+\×\d+\.\d+|\d+\.\d+\×\d+|\d+\×\d+\.\d+|\d+\×\d+/;
+      const additionRegEx =
+        /\d+\.\d+\+\d+\.\d+|\d+\.\d+\+\d+|\d+\+\d+\.\d+|\d+\+\d+/;
 
-    //   return value;
-    // } ;
+      const subtrationRegEx =
+        /\d+\.\d+\-\d+\.\d+|\d+\.\d+\-\d+|\d+\-\d+\.\d+|\d+\-\d+/;
+
+      if (raiseToPowerRegEx.test(value)) {
+        mathsWork(raiseToPowerRegEx, "getRaiseToPower");
+      } else if (divisionRegEx.test(value)) {
+        mathsWork(divisionRegEx, "getDivision");
+      } else if (multiplicationRegEx.test(value)) {
+        mathsWork(multiplicationRegEx, "getMultiplication");
+      } else if (additionRegEx.test(value)) {
+        mathsWork(additionRegEx, "getAdditionRegEx");
+      } else if (subtrationRegEx.test(value)) {
+        mathsWork(subtrationRegEx, "getSubtration");
+      }
+    };
+
+    solve();
+
+    this.input.value = "";
+    this.input.value = "=" + value;
   }
 
   displayOnScreen(newValue) {
@@ -80,11 +150,13 @@ class Calculator {
       }
 
       const history = `<span class='current_equal-history'>${this.input.value}</span>`;
+      this.input.value = "";
+      newValue = "";
       const screen = document.querySelector(".calculator_header");
 
       screen.insertAdjacentHTML("beforeend", history);
 
-      this.calculate(this.input.value);
+      this.calculate(value);
     };
 
     // don't move further if the it's = and the screen is empty
