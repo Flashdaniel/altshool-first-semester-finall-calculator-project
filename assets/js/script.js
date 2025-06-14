@@ -5,6 +5,7 @@ class Calculator {
 
     this.onClickBound = this.onClick.bind(this);
     this.inputBound = this.onInput.bind(this);
+    this.onKeyDownBound = this.onKeyDown.bind(this);
   }
 
   add(val1, val2) {
@@ -63,6 +64,7 @@ class Calculator {
   run() {
     this.buttonParent.addEventListener("click", this.onClickBound);
     this.input.addEventListener("input", this.inputBound);
+    addEventListener("keydown", this.onKeyDownBound);
   }
 
   delete() {
@@ -85,17 +87,38 @@ class Calculator {
     if (this.input.value) {
       this.input.value = "";
       const history = document.querySelector(".current_equal-history");
-      history.remove();
+
+      if (history) history.remove();
     }
 
     return;
   }
 
   showHistory() {
-    console.log("showHistory");
+    const dialog = document.querySelector("dialog");
+    dialog.showModal();
+  }
+
+  createHistory() {
+    if (/^=\d+\.\d+$|^=\d+$/.test(this.input.value)) {
+      const currenEqualHistory = document.querySelector(
+        ".current_equal-history"
+      );
+      const value = this.input.value;
+
+      const saveHistory = `<div><p>${currenEqualHistory.textContent}</p></p>${value}</p></div>`;
+
+      const dialog = document.querySelector("dialog");
+      dialog.insertAdjacentHTML("beforeend", saveHistory);
+    }
   }
 
   calculate(input) {
+    // no sign at the end of the total result of the calculations
+    if (/\÷$|×$|\^$|\-$|\+$|\.$/.test(input)) {
+      input = input.slice(0, input.length - 1);
+    }
+
     let value = input;
 
     const solve = () => {
@@ -134,9 +157,18 @@ class Calculator {
 
     this.input.value = "";
     this.input.value = "=" + value;
+
+    this.createHistory();
   }
 
   displayOnScreen(newValue) {
+    // if there is already an answer start again;
+    if (/^=|^=\d+/.test(this.input.value)) {
+      this.input.value = "";
+      const history = document.querySelector(".current_equal-history");
+      if (history) history.remove();
+    }
+
     const signs = ["+", "-", "×", "%", "^", "÷", "."];
 
     const prepareForCalculations = () => {
@@ -211,6 +243,46 @@ class Calculator {
         `${percent}`
       );
     }
+  }
+
+  onKeyDown(event) {
+    const isValidValue = [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "=",
+      "+",
+      ".",
+      "*",
+      "/",
+      "%",
+      "-",
+      "^",
+      "Backspace",
+    ].includes(event.key);
+
+    if (!isValidValue) return;
+
+    let key = event.key;
+
+    if (key == "/") {
+      key = "÷";
+    } else if (key == "*") {
+      key = "×";
+    } else if (key == "Backspace") {
+      this.delete();
+      return;
+    }
+
+    this.displayOnScreen(key);
+    // console.log(event);
   }
 
   onClick(event) {
