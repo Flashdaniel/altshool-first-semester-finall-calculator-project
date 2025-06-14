@@ -20,7 +20,7 @@ This is the finished design of the Light visual landing page.
 
 ### Links
 
-- Live Site URL: [url]()
+- Live Site URL: [url](https://flashdaniel.github.io/altshool-first-semester-finall-calculator-project/)
 
 ## My process
 
